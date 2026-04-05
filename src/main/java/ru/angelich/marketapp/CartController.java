@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.angelich.marketapp.models.Action;
 
 @Controller
 @RequestMapping("/cart")
@@ -22,8 +23,7 @@ public class CartController {
 
     @PostMapping("/items")
     String addToCart(@RequestParam Long id,
-                     @RequestParam String action //MINUS, PLUS
-    ) {
+                     @RequestParam Action action) {
 
         model.addAttribute("items", items);
         model.addAttribute("total", total);
