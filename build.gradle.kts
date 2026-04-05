@@ -26,21 +26,27 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-h2console")
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+
     compileOnly("org.projectlombok:lombok")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+
     runtimeOnly("com.h2database:h2")
+
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
+
     testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
     testImplementation("org.springframework.boot:spring-boot-starter-thymeleaf-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
