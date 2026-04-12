@@ -6,6 +6,6 @@ public record ItemDto(
         String description,
         String imgPath,
         long price,
-        int count
+        long count
 ) {
 }

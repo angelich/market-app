@@ -12,7 +12,7 @@ import ru.angelich.marketapp.models.Item;
 import java.util.Optional;
 
 @Repository
-public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
+public interface ItemRepository extends JpaRepository<Item, Long> {
     Optional<Item> findItemById(Long id);
 
     @Query("SELECT i FROM Item i WHERE (:search IS NULL OR LOWER(i.title) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :search, '%')))")

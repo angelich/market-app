@@ -20,5 +20,4 @@ public class Item {
     private String description;
     private String imgPath;
     private long price;
-    private int count;
 }

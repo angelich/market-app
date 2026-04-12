@@ -3,7 +3,7 @@ package ru.angelich.marketapp.models;
 import java.util.List;
 
 public record ItemsResponse(
-        List<List<Item>> items,
+        List<List<ItemDto>> items,
         Paging paging
 ) {
 }

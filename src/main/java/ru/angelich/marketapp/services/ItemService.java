@@ -1,14 +1,13 @@
 package ru.angelich.marketapp.services;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.angelich.marketapp.models.Item;
-import ru.angelich.marketapp.models.ItemsResponse;
-import ru.angelich.marketapp.models.ItemsSort;
-import ru.angelich.marketapp.models.Paging;
+import ru.angelich.marketapp.models.*;
+import ru.angelich.marketapp.models.SortItems;
 import ru.angelich.marketapp.repositories.ItemRepository;
 
 import java.util.ArrayList;
@@ -17,19 +16,29 @@ import java.util.List;
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final CartProvider cartProvider;
 
-    public ItemService(ItemRepository itemRepository) {
+    public ItemService(ItemRepository itemRepository, CartProvider cartProvider) {
         this.itemRepository = itemRepository;
+        this.cartProvider = cartProvider;
     }
 
-    public Item getItemById(Long id) {
+    public Item getItemByIdOrThrow(Long id) {
         return itemRepository.findItemById(id)
-                 .orElseThrow(() -> new IllegalArgumentException("Item not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Item not found with id: " + id));
     }
 
-    public ItemsResponse findItems(String search, ItemsSort sort, Integer pageNumber, Integer pageSize) {
-        if (pageNumber == null) pageNumber = 1;
-        if (pageSize == null) pageSize = 5;
+    public void saveItem(Item item) {
+        getItemByIdOrThrow(item.getId());
+        itemRepository.save(item);
+    }
+
+    public ItemDto getItemDtoById(Long id) {
+        Item item = getItemByIdOrThrow(id);
+        return toDto(item);
+    }
+
+    public ItemsResponse findItems(String search, SortItems sort, Integer pageNumber, Integer pageSize) {
 
         Sort springSort = switch (sort) {
             case ALPHA -> Sort.by("title");
@@ -40,20 +49,7 @@ public class ItemService {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, springSort);
         Page<Item> page = itemRepository.findItems(search, pageable);
 
-        List<Item> flatItems = page.getContent();
-        // вынести в отдельную функцию
-        List<List<Item>> groupedItems = new ArrayList<>();
-        for (int i = 0; i < flatItems.size(); i += 3) {
-            List<Item> row = new ArrayList<>();
-            for (int j = 0; j < 3 && i + j < flatItems.size(); j++) {
-                row.add(flatItems.get(i + j));
-            }
-
-            while (row.size() < 3) {
-                row.add(new Item(-1L, "", "", "", 0L, 0));
-            }
-            groupedItems.add(row);
-        }
+        List<List<ItemDto>> groupedItems = getLists(page);
 
         boolean hasPrevious = pageNumber > 1;
         boolean hasNext = page.hasNext();
@@ -61,5 +57,30 @@ public class ItemService {
         Paging paging = new Paging(pageSize, pageNumber, hasPrevious, hasNext);
 
         return new ItemsResponse(groupedItems, paging);
+    }
+
+    private @NonNull List<List<ItemDto>> getLists(Page<Item> page) {
+        List<Item> flatItems = page.getContent();
+
+        List<List<ItemDto>> groupedItems = new ArrayList<>();
+        for (int i = 0; i < flatItems.size(); i += 3) {
+            List<ItemDto> row = new ArrayList<>();
+            for (int j = 0; j < 3 && i + j < flatItems.size(); j++) {
+                Item item = flatItems.get(i + j);
+                row.add(toDto(item));
+            }
+
+            while (row.size() < 3) {
+                row.add(new ItemDto(-1L, "", "", "", 0L, 0));
+            }
+            groupedItems.add(row);
+        }
+        return groupedItems;
+    }
+
+    private ItemDto toDto(Item item) {
+        Cart cart = cartProvider.getOrCreateSingletonCart();
+        long count = cart.getItems().stream().filter(i -> i.getId().equals(item.getId())).count();
+        return new ItemDto(item.getId(), item.getTitle(), item.getDescription(), item.getImgPath(), item.getPrice(), count);
     }
 }
