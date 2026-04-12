@@ -1,5 +1,5 @@
 package ru.angelich.marketapp.models;
 
-public enum Sort {
+public enum ItemsSort {
     NO, ALPHA, PRICE
 }

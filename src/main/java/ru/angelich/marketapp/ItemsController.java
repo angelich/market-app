@@ -8,31 +8,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.angelich.marketapp.models.Action;
-import ru.angelich.marketapp.models.ItemDto;
-import ru.angelich.marketapp.models.Sort;
-
-import java.util.ArrayList;
-import java.util.List;
+import ru.angelich.marketapp.models.Item;
+import ru.angelich.marketapp.models.ItemsSort;
+import ru.angelich.marketapp.services.ItemService;
 
 @Controller
 public class ItemsController {
+    private final ItemService itemService;
+
+    public ItemsController(ItemService itemService) {
+        this.itemService = itemService;
+    }
 
     @GetMapping(path = {"/", "/items"})
     String getItems(
             @RequestParam(required = false) String search,
-            @RequestParam(required = false, defaultValue = "NO") Sort sort,
+            @RequestParam(required = false, defaultValue = "NO") ItemsSort itemsSort,
             @RequestParam(required = false) Integer pageNumber,
             @RequestParam(required = false) Integer pageSize,
             Model model) {
 
+        var response = itemService.findItems(search, itemsSort, pageNumber, pageSize);
 
-
-        //response
-        List<List<ItemDto>> items = new ArrayList<>();
-        model.addAttribute("items", items);
+        model.addAttribute("items", response.items());
         model.addAttribute("search", search);
-        model.addAttribute("sort", sort);
-        model.addAttribute("paging", paging);
+        model.addAttribute("sort", itemsSort);
+        model.addAttribute("paging", response.paging());
 
         return "items";
     }
@@ -41,7 +42,7 @@ public class ItemsController {
     String postItems(
             @RequestParam String id,
             @RequestParam(required = false) String search,
-            @RequestParam(required = false, defaultValue = "NO") Sort sort,
+            @RequestParam(required = false, defaultValue = "NO") ItemsSort itemsSort,
             @RequestParam(required = false) Integer pageNumber,
             @RequestParam(required = false) Integer pageSize,
             @RequestParam Action action,
@@ -50,7 +51,7 @@ public class ItemsController {
         if (search != null) {
             redirectAttributes.addAttribute("search", search);
         }
-        redirectAttributes.addAttribute("sort", sort);
+        redirectAttributes.addAttribute("sort", itemsSort);
         if (pageNumber != null) {
             redirectAttributes.addAttribute("pageNumber", pageNumber);
         }
@@ -61,7 +62,9 @@ public class ItemsController {
     }
 
     @GetMapping("/items/{id}")
-    String getItemById(@PathVariable String id, Model model) {
+    String getItemById(@PathVariable Long id, Model model) {
+        Item item = itemService.getItemById(id);
+
         model.addAttribute("item", item);
         return "item";
     }

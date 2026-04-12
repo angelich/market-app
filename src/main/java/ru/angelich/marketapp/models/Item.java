@@ -15,9 +15,10 @@ import lombok.NoArgsConstructor;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long id;
+    private Long id;
     private String title;
     private String description;
     private String imgPath;
     private long price;
+    private int count;
 }
