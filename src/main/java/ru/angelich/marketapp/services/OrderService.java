@@ -1,6 +1,7 @@
 package ru.angelich.marketapp.services;
 
 import org.springframework.stereotype.Service;
+import ru.angelich.marketapp.exceptions.OrderNotFoundException;
 import ru.angelich.marketapp.mappers.OrderMapper;
 import ru.angelich.marketapp.models.Item;
 import ru.angelich.marketapp.models.ItemDto;
@@ -30,7 +31,7 @@ public class OrderService {
 
     public Orders getOrderByIdOrThrow(Long id) {
         return orderRepository.findOrderById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + id));
+                .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
     }
 
     public OrderDto getOrderDtoById(Long id) {

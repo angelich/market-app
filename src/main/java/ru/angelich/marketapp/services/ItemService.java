@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.angelich.marketapp.exceptions.ItemNotFoundException;
 import ru.angelich.marketapp.models.*;
 import ru.angelich.marketapp.models.SortItems;
 import ru.angelich.marketapp.repositories.ItemRepository;
@@ -25,7 +26,7 @@ public class ItemService {
 
     public Item getItemByIdOrThrow(Long id) {
         return itemRepository.findItemById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Item not found with id: " + id));
+                .orElseThrow(() -> new ItemNotFoundException("Item not found with id: " + id));
     }
 
     public ItemDto getItemDtoById(Long id) {
