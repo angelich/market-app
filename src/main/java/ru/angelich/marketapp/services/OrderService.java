@@ -38,11 +38,16 @@ public class OrderService {
     }
 
     public Orders createOrder(List<ItemDto> cartItems) {
-        List<Item> items = cartItems.stream().map(dto -> {
-            Item item = itemService.getItemByIdOrThrow(dto.id());
-            return item;
-        }).toList();
-        long totalSum = cartItems.stream().mapToLong(dto -> dto.price() * dto.count()).sum();
+        List<Item> items = cartItems
+                .stream()
+                .map(dto -> itemService.getItemByIdOrThrow(dto.id()))
+                .toList();
+
+        long totalSum = cartItems
+                .stream()
+                .mapToLong(dto -> dto.price() * dto.count())
+                .sum();
+
         cartService.clearCart();
         return orderRepository.save(new Orders(null, items, totalSum));
     }

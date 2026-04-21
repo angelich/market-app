@@ -28,11 +28,6 @@ public class ItemService {
                 .orElseThrow(() -> new IllegalArgumentException("Item not found with id: " + id));
     }
 
-    public void saveItem(Item item) {
-        getItemByIdOrThrow(item.getId());
-        itemRepository.save(item);
-    }
-
     public ItemDto getItemDtoById(Long id) {
         Item item = getItemByIdOrThrow(id);
         return toDto(item);
@@ -59,7 +54,7 @@ public class ItemService {
         return new ItemsResponse(groupedItems, paging);
     }
 
-    private @NonNull List<List<ItemDto>> getLists(Page<Item> page) {
+    private List<List<ItemDto>> getLists(Page<Item> page) {
         List<Item> flatItems = page.getContent();
 
         List<List<ItemDto>> groupedItems = new ArrayList<>();
@@ -80,7 +75,11 @@ public class ItemService {
 
     private ItemDto toDto(Item item) {
         Cart cart = cartProvider.getOrCreateSingletonCart();
-        long count = cart.getItems().stream().filter(i -> i.getId().equals(item.getId())).count();
+        long count = cart.getItems()
+                .stream()
+                .filter(i -> i.getId().equals(item.getId()))
+                .count();
+
         return new ItemDto(item.getId(), item.getTitle(), item.getDescription(), item.getImgPath(), item.getPrice(), count);
     }
 }
