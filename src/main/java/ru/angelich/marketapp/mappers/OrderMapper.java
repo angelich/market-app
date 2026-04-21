@@ -10,5 +10,6 @@ public interface OrderMapper {
 
     @Mapping(target = "items.description", ignore = true)
     @Mapping(target = "items.imgPath", ignore = true)
+    @Mapping(target = "items.count", ignore = true)
     OrderDto toDto(Orders orders);
 }
