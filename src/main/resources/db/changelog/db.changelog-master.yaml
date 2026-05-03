@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: classpath:/db/changelog/2026/04/05-01-changelog.xml
+  - include:
+      file: classpath:/db/changelog/2026/04/05-02-changelog.xml

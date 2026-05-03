@@ -21,17 +21,17 @@
                 </div>
             </div>
         </div>
-        <div class="row p-2" th:each="order : ${orders}">
+        <div class="row p-2" th:each="orders : ${orders}">
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <a th:text="${'Заказ №'+order.id()}" th:href="${'/orders/'+order.id()}"></a>
+                        <a th:text="${'Заказ №'+orders.id()}" th:href="${'/orders/'+orders.id()}"></a>
                     </div>
-                    <ul class="list-group list-group-flush" th:each="item : ${order.items()}">
+                    <ul class="list-group list-group-flush" th:each="item : ${orders.items()}">
                         <li class="list-group-item" th:text="${item.title()+' ('+item.count()+' шт.) '+(item.price()*item.count())+' руб.'}"/>
                     </ul>
                     <div class="card-footer">
-                        <b th:text="${'Сумма: '+order.totalSum()}+' руб.'"></b>
+                        <b th:text="${'Сумма: '+orders.totalSum()}+' руб.'"></b>
                     </div>
                 </div>
             </div>
